@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"          # Ollama API (optional external access)
+    volumes:
+      - ollama-data:/root/.ollama
+
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: openwebui
+    restart: unless-stopped
+    depends_on:
+      - ollama
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      # optionally set WEBUI_SECRET_KEY for auth in production
+      # - WEBUI_SECRET_KEY=change-me
+    ports:
+      - "3000:8080"           # Web UI at http://YOUR_VPS_IP:3000
+    volumes:
+      - openwebui-data:/app/backend/data
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"           # n8n at http://YOUR_VPS_IP:5678
+    environment:
+      # basic sane defaults; you can refine later
+      - N8N_BASIC_AUTH_ACTIVE=false
+      - N8N_HOST=72.61.41.228
+      - N8N_PORT=5678
+    volumes:
+      - n8n-data:/home/node/.n8n
+
+volumes:
+  ollama-data:
+  openwebui-data:
+  n8n-data:
