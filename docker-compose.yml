@@ -31,6 +31,7 @@ services:
       - N8N_BASIC_AUTH_ACTIVE=false
       - N8N_HOST=72.61.41.228
       - N8N_PORT=5678
+      - N8N_SECURE_COOKIE=false
     volumes:
       - n8n-data:/home/node/.n8n
 
