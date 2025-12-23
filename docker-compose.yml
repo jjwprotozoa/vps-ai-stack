@@ -10,20 +10,19 @@ services:
     volumes:
       - ollama-data:/root/.ollama
 
-  openwebui:
-    image: ghcr.io/open-webui/open-webui:main
-    container_name: openwebui
-    restart: unless-stopped
-    depends_on:
-      - ollama
-    environment:
-      - OLLAMA_BASE_URL=http://ollama:11434
-      # optionally set WEBUI_SECRET_KEY for auth in production
-      # - WEBUI_SECRET_KEY=change-me
-    ports:
-      - "3000:8080"           # Web UI at http://YOUR_VPS_IP:3000
-    volumes:
-      - openwebui-data:/app/backend/data
+openwebui:
+  image: backplane/open-webui:0-ollama
+  container_name: openwebui
+  restart: unless-stopped
+  depends_on:
+    - ollama
+  environment:
+    - OLLAMA_BASE_URL=http://ollama:11434
+  ports:
+    - "3000:8080"
+  volumes:
+    - openwebui-data:/app/backend/data
+
 
   n8n:
     image: n8nio/n8n:latest
